@@ -5,12 +5,12 @@ var io = require("socket.io")(http);
 
 app.get('/', function (req, res){
   res.writeHead(200, {"Content-Type": "text/plain"});
-  res.end("Hello! This is demo chat socket on openshift \n");
+  res.end("Teste chat \n");
 });
 
 io.on("connection", function (socket){
     socket.on("CHAT", function(data){
-        io.emit("CHAT", {message: data.message});
+        io.emit("CHAT", { usuario : data.usuario, message: data.message});
     });
 });
 
@@ -18,5 +18,5 @@ var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var ip = process.env.OPENSHIFT_NODEJS_IP;
 
 http.listen(port, ip, function(){
-    console.log("demo start success!!!!!!!!!");
+    console.log("chat com sucesso!!!!!!!!!");
 })
