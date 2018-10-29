@@ -1,6 +1,11 @@
 var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://LuanLCosta:luanlprc@mongodb/sampledb');
+
+
+const chat = mongoose.model('Chat', { usuario: String, message: String });
 
 
 app.get('/', function (req, res){
@@ -10,6 +15,8 @@ app.get('/', function (req, res){
 
 io.on("connection", function (socket){
     socket.on("CHAT", function(data){
+    	const mensage = new chat({ usuario : data.usuario, message: data.message});
+    	message.save().then (()=> console.log('gravou ' + data.message)) 
         io.emit("CHAT", { usuario : data.usuario, message: data.message});
     });
 });
