@@ -1,11 +1,11 @@
 var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://LuanLCosta:luanlprc@mongodb/sampledb');
+// const mongoose = require('mongoose');
+// mongoose.connect('mongodb://LuanLCosta:luanlprc@mongodb/sampledb');
 
 
-const chat = mongoose.model('Chat', { usuario: String, message: String });
+// const chat = mongoose.model('Chat', { usuario: String, message: String });
 
 
 app.get('/', function (req, res){
@@ -22,8 +22,7 @@ io.on("connection", function (socket){
     });
 });
 
-var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var ip = process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0";
+var port = process.env.PORT || 8080;
 
 http.listen(port, ip, function(){
     console.log("chat com sucesso!!!!!!!!!");
