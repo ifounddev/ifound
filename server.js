@@ -1,29 +1,57 @@
-var app = require("express")();
-var http = require("http").Server(app);
-var io = require("socket.io")(http);
-// const mongoose = require('mongoose');
-// mongoose.connect('mongodb://LuanLCosta:luanlprc@mongodb/sampledb');
+    var app = require("express")();
+    var http = require("http").Server(app);
+    var io = require("socket.io")(http);
+    var users = {};
 
 
-// const chat = mongoose.model('Chat', { usuario: String, message: String });
-
-
-app.get('/', function (req, res){
-  res.writeHead(200, {"Content-Type": "text/plain"});
-  res.end("Teste chat \n");
-});
-
-io.on("connection", function (socket){
-    socket.on("CHAT", function(data){
-    	const mensage = new chat({ usuario : data.usuario, message: data.message});
-    	message.save().then (()=> console.log('gravou ' + data.message)) 
-  		io.to(`${socketId}`).emit('CHAT', { usuario : data.usuario, message: data.message});
-        // io.emit("CHAT", { usuario : data.usuario, message: data.message});
+    app.get('/', function (req, res){
+      res.writeHead(200, {"Content-Type": "text/plain"});
+      res.end("Teste chat \n");
     });
-});
 
-var port = process.env.PORT || 8080;
+    io.on("connection", function (socket){
 
-http.listen(port, function(){
-    console.log("chat com sucesso!!!!!!!!!");
-})
+
+      socket.on("LOGIN", function(data){
+
+        if(data.userToken in users){
+          console.log("entrou no if " +  users.userToken);
+
+        }else{
+          console.log("entrou no else " +  users.userToken);
+
+          socket.nickname = data.userToken;
+          console.log("socket nick " +  socket.nickname);
+
+          users[socket.nickname] = socket;
+          console.log("users " +  users);
+
+        }
+      });
+
+
+      socket.on("CHAT", function(data){
+
+        console.log("Alguem chatou" + data.usuario);
+if(data.usuario in users){
+          users[data.usuario].emit("MSG", { usuario : data.usuario, message: data.message});
+
+        }else{
+                  console.log("Nao encontrou " + data.usuario + " no array " + data.userToken);
+
+        }
+        // io.emit("CHAT", { usuario : data.usuario, message: data.message});
+        // users[data.usuario].emit( "CHAT", { usuario : data.usuario, message: data.message});
+
+
+      });
+    });
+
+    var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+    var ip = process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0";
+    // var port = process.env.PORT || 8080;
+
+
+    http.listen(port, ip, function(){
+      console.log("chat com sucesso!!!!!!!!!");
+    })
